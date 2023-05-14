@@ -1,19 +1,25 @@
-import { galleryItems } from './gallery-items.js';
+import { galleryItems } from "./gallery-items.js";
 // Change code below this line
-const galleryRef = document.querySelector('.gallery');
+const galleryRef = document.querySelector(".gallery");
 const galleryMarkup = createItemsMarkup(galleryItems);
 
 galleryRef.innerHTML = galleryMarkup;
-galleryRef.addEventListener('click', onUlGalleryClick);
+galleryRef.addEventListener("click", onUlGalleryClick);
+let modalWithBigImage;
 
 function onUlGalleryClick(e) {
-    e.preventDefault();
-    if (e.target.nodeName !== 'IMG') return;
-    console.log(e.target.dataset.source)
+  e.preventDefault();
+  if (e.target.nodeName !== "IMG") return;
+
+  modalWithBigImage = createLightBox(e);
+  modalWithBigImage.show();
+  window.addEventListener("keydown", onEscapeClose);
 }
 
 function createItemsMarkup(arr) {
-    return arr.map(el => 
+  return arr
+    .map(
+      (el) =>
         `<li class="gallery__item">
         <a class="gallery__link" href="${el.original}">
           <img
@@ -24,7 +30,18 @@ function createItemsMarkup(arr) {
           />
         </a>
       </li>`
-    ).join('');
+    )
+    .join("");
 }
-
-
+function createLightBox(event) {
+  return basicLightbox.create(`<img
+    src="${event.target.dataset.source}"
+    width="1280"
+  /> 
+    `);
+}
+function onEscapeClose(e) {
+  if (e.code !== "Escape") return;
+  modalWithBigImage.close();
+  window.removeEventListener("keydown", onEscapeClose);
+}
