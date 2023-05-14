@@ -13,7 +13,6 @@ function onUlGalleryClick(e) {
 
   modalWithBigImage = createLightBox(e);
   modalWithBigImage.show();
-  window.addEventListener("keydown", onEscapeClose);
 }
 
 function createItemsMarkup(arr) {
@@ -34,14 +33,18 @@ function createItemsMarkup(arr) {
     .join("");
 }
 function createLightBox(event) {
-  return basicLightbox.create(`<img
+  return basicLightbox.create(
+    `<img
     src="${event.target.dataset.source}"
     width="1280"
   /> 
-    `);
+    `,
+    {
+      onShow: () => window.addEventListener("keydown", onEscapeClose),
+      onClose: () => window.removeEventListener("keydown", onEscapeClose),
+    }
+  );
 }
 function onEscapeClose(e) {
-  if (e.code !== "Escape") return;
-  modalWithBigImage.close();
-  window.removeEventListener("keydown", onEscapeClose);
+  if (e.code === "Escape") modalWithBigImage.close();
 }
